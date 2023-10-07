@@ -7,3 +7,5 @@ https://operating-system-in-1000-lines.vercel.app/ja/assembly#%E7%89%B9%E6%A8%A9
 ## ecall呼び出しから文字が表示されるまでの流れ
 https://operating-system-in-1000-lines.vercel.app/ja/hello-world#%E5%88%9D%E3%82%81%E3%81%A6%E3%81%AEsbi
 
+## Clangの拡張
+https://clang.llvm.org/docs/LanguageExtensions.html

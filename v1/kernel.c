@@ -34,14 +34,6 @@ struct sbiret sbi_call(long arg0, long arg1, long arg2, long arg3, long arg4,
 // https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-legacy.adoc#extension-console-putchar-eid-0x01
 void putchar(char ch) { sbi_call(ch, 0, 0, 0, 0, 0, 0, 1); }
 
-void *memset(void *buf, char c, size_t n) {
-  uint8_t *p = (uint8_t *)buf;
-  while (n--) {
-    *p++ = c;
-  }
-  return buf;
-}
-
 void kernel_main(void) {
   const char *s = "\n\nHello World!\n";
   for (int i = 0; s[i] != '\0'; i++) {

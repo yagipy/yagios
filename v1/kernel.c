@@ -7,7 +7,7 @@ typedef unsigned int uint32_t;
 typedef uint32_t size_t;
 
 extern char __bss[], __bss_end[],
-    __stack_top[];  // リンカスクリプト内で定義されている各シンボルを宣言
+    __stack_top[], __free_ram[], __free_ram_end[];  // リンカスクリプト内で定義されている各シンボルを宣言
 
 struct sbiret sbi_call(long arg0, long arg1, long arg2, long arg3, long arg4,
                        long arg5, long fid, long eid) {
@@ -122,15 +122,32 @@ void handle_trap(struct trap_frame *f) {
     PANIC("unexpected trap scause=%x, stval=%x, sepc=%x\n", scause, stval, user_pc);
 }
 
+// nページ分のメモリを動的に割り当てて、その先頭アドレスを返す
+// このような個別のメモリページを解放しない割り当てアルゴリズムは、BumpアロケータまたはLinearアロケータと呼ばれる
+// 解放処理を実装する場合は、ビットマップで空き状況を管理したり、バディシステムというアルゴリズムを使ったりする
+paddr_t alloc_pages(uint32_t n) {
+    // 次に割り当てられる領域(空いている領域)の先頭アドレス
+    // __free_ramのアドレスを初期値として持ち、__free_ramから順にメモリを割り当てていく
+    static paddr_t next_paddr = (paddr_t) __free_ram;
+    paddr_t paddr = next_paddr;
+    next_paddr += n * PAGE_SIZE;
+
+    if (next_paddr > (paddr_t) __free_ram_end) {
+        PANIC("out of memory");
+    }
+
+    memset((void *) paddr, 0, n * PAGE_SIZE);
+    return paddr;
+}
+
 void kernel_main(void) {
-  const char *s = "\n\nHello World!\n";
-  for (int i = 0; s[i] != '\0'; i++) {
-    putchar(s[i]);
-  }
   printf("\n\nHello %s!\n", "World");
-  printf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
-  WRITE_CSR(stvec, (uint32_t) kernel_entry);
-  __asm__ __volatile__("unimp"); // 無効な命令
+  paddr_t paddr0 = alloc_pages(2);
+  paddr_t paddr1 = alloc_pages(1);
+  printf("alloc_pages test: paddr0=%x\n", paddr0);
+  printf("alloc_pages test: paddr1=%x\n", paddr1);
+
+  PANIC("booted!");
 
   for (;;) {
     __asm__ __volatile__("wfi");

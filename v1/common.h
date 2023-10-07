@@ -12,6 +12,7 @@ typedef uint32_t vaddr_t; // 仮想メモリアドレスを表す型で、uintpt
 #define true 1
 #define false 0
 #define NULL ((void *) 0)
+#define PAGE_SIZE 4096
 
 // https://clang.llvm.org/docs/LanguageExtensions.html#variadic-function-builtins
 #define align_up(value, align) __builtin_align_up(value, align) // valueをalignの倍数に切り上げる

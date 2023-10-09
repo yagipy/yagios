@@ -14,3 +14,6 @@ https://clang.llvm.org/docs/LanguageExtensions.html
 
 ## APS RISC-V
 https://www.aps-web.jp/category/academy/risc-v/
+
+## xv6
+https://ja.wikipedia.org/wiki/Xv6

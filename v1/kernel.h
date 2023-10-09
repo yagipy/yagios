@@ -26,6 +26,20 @@
         __asm__ __volatile__("csrw " #reg ", %0" : : "r"(__tmp)); \
     } while (0)
 
+
+#define PROCS_MAX 8
+#define PROC_UNUSED 0
+#define PROC_RUNNABLE 1
+
+struct process {
+    int pid;
+    int state;
+    vaddr_t sp; // コンテキストスイッチ時のスタックポインタ
+    // カーネルスタック
+    // コンテキストスイッチ時のCPUレジスタ、関数の戻り先、各関数でのローカル変数などが入っている
+    uint8_t stack[8192];
+};
+
 struct sbiret {
   long error;
   long value;
